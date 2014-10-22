@@ -1,35 +1,50 @@
-//  Demo function:The application method to drive the DC motor.
-//  Author:Frankie.Chu
-//  Date:20 November, 2012
+//  Motor Driver with Serial Input
 
 #include "MotorDriver.h"
 
-void setup()
-{
-	/*Configure the motor A to control the wheel at the left side.*/
-	/*Configure the motor B to control the wheel at the right side.*/
-	motordriver.init();
-	motordriver.setSpeed(200,MOTORB);
-	motordriver.setSpeed(200,MOTORA);
+String inputString = "";         // a string to hold incoming data
+boolean stringComplete = false;  // whether the string is complete
+
+void setup() {
+  // initialize serial:
+  Serial.begin(9600);
+  // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
+  
+  /*Configure the motor A to control the wheel at the left side.*/
+  /*Configure the motor B to control the wheel at the right side.*/
+  motordriver.init();
+  motordriver.setSpeed(200,MOTORB);
+  motordriver.setSpeed(200,MOTORA);
+  
 }
  
-void loop()
-{
-	motordriver.goForward();
-	delay(2000);
-	motordriver.stop();
-	delay(1000);
-	motordriver.goBackward();
-	delay(2000);
-	motordriver.stop();
-	delay(1000);
-	motordriver.goLeft();
-	delay(2000);
-	motordriver.stop();
-	delay(1000);
-	motordriver.goRight();
-	delay(2000);
-	motordriver.stop();
-	delay(1000);
-	
+void loop() {
+  
+   // print the string when a newline arrives:
+  if (stringComplete) {
+    Serial.println(inputString);
+    
+    switch(inputString) {
+    case 'forward':
+        motordriver.goForward();
+    break;
+    case 'back':
+        motordriver.goBackward();
+    break;
+    case 'left':
+        motordriver.goLeft();
+    break;
+    case 'right':
+        motordriver.goRight();
+    break;
+    case 'stop':
+        motordriver.stop();
+    break;
+    }
+    // clear the string:
+    inputString = "";
+    stringComplete = false;
+  }
+  
 }
